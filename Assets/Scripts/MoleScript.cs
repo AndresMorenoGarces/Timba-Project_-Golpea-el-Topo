@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MoleScript
 {
-    public MoleScript(int moleNum, Transform moleTransform) 
+    public MoleScript(int moleNum, Transform moleTransform) // Constructor que contiene las variables del topo
     {
         GameObject moleInstance = GameObject.Instantiate(GameObject.Find("MolePrefab"));
         moleInstance.name = "Mole " + moleNum;

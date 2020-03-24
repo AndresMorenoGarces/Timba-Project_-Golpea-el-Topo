@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 
 public class UIScript : MonoBehaviour
@@ -17,12 +15,12 @@ public class UIScript : MonoBehaviour
 
     private GameManager gameManager;
 
-    private void SmasherScoreText() 
+    private void SmasherScoreText() // Funcion que muestra el texto en game del Smasher (encargado del golpear el topo)
     {
         smasherScore.text = "" + gameManager.GetComponent<GameManager>().SetSmasherScore();
         smasherBestScore.text = "" + PlayerPrefs.GetInt("Smasher_Best_Score");
     }
-    private void MoleScoreText() 
+    private void MoleScoreText() // Funcion que muestra el texto en game del topo
     {
         moleScore.text = "" + gameManager.GetComponent<GameManager>().SetMoleScore();
         moleBestScore.text = "" + PlayerPrefs.GetInt("Mole_Best_Score");

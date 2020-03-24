@@ -11,12 +11,10 @@ public class GameManager : MonoBehaviour
 
     private List<GameObject> moleToDestroy = new List<GameObject>();
     private List<Transform> oldMoles = new List<Transform>();
-    private GameObject uiScriptContainer;
-    private Transform beforeMole;
     private KeyCode[] keyCodeArray;
     private int currentMole = 0, simultaneActiveMole = 0, smasherScore = 0, moleScore = 0;
 
-    private void Awake()
+    private void Awake() 
     {
         GameDifficult();
     }
@@ -46,10 +44,8 @@ public class GameManager : MonoBehaviour
         GameDifficult();
     }
 
-    private void InstanceMole()
+    private void InstanceMole() // Funcion que instancia un topo con posicion, cantidad y tiempo
     {
-        /*stringMole = Input.inputString;
-        currentMole = (int) Input.GetAxis(stringMole);*/
         if (Input.GetKeyDown(keyCodeArray[currentMole]) && simultaneActiveMole < maxSimultaneMoles 
             && currentMole != 0 && !oldMoles.Contains(voidMoleTransforms[currentMole]))
         {
@@ -75,8 +71,11 @@ public class GameManager : MonoBehaviour
             simultaneActiveMole = 0;
             oldMoles.Clear();
         }
+        //Queria hacer mas compacto la atribucion de un valor a las teclas, en las lineas de abajo esta el intento
+        /*stringMole = Input.inputString;
+        currentMole = (int) Input.GetAxis(stringMole);*/
     }
-    private void AssignMole() 
+    private void AssignMole() // La forma por la cual asigno un valor a cada keypad. Quice hacerlo mas compacto (esta en las lineas de arriba lo que queria hacer)
     {
         if (Input.GetKey(KeyCode.Keypad1))
             currentMole = 1;
@@ -99,7 +98,7 @@ public class GameManager : MonoBehaviour
         else
             currentMole = 0;
     }
-    private void GameDifficult() 
+    private void GameDifficult() // Esta funcion permite cambiar la dificultad del juego por unas preestablecidas o personalizarla con sus respectivas restricciones
     {
         if (gameDificult == GameDificult.Easy)
         { maxSimultaneMoles = 3; timeToSpawnMole = 2; }
@@ -116,30 +115,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public int SetSmasherScore() 
+    public int SetSmasherScore() // Funcion que permite utilizar una variable desde otra clase
     {
         return smasherScore;
     }
-    public int SetMoleScore() 
+    public int SetMoleScore() // Funcion que permite utilizar una variable desde otra clase
     {
         return moleScore;
     }
-    public void UpdateSmasherScore() 
+    public void UpdateSmasherScore() // Funcion que actualiza la variable smacherScore
     {
         smasherScore += 10;
     }
-    public void UpdateMoleScore() 
+    public void UpdateMoleScore() // Funcion que actualiza la variable moleScore
     {
         moleScore += 10;
     }
 
-    public void SaveSmasherScore() 
+    public void SaveSmasherScore() // Funcion que guarda las variable de la ultima partida y la mejor del topo
     {
         PlayerPrefs.SetInt("Smasher_Last_Score", smasherScore);
         if (smasherScore > PlayerPrefs.GetInt("Smasher_Best_Score"))
             PlayerPrefs.SetInt("Smasher_Best_Score", smasherScore);
     }
-    public void SaveMoleScore() 
+    public void SaveMoleScore()  // Funcion que guarda las variable de la ultima partida y la mejor del topo
     {
         PlayerPrefs.SetInt("Mole_Last_Score", moleScore);
         if (moleScore > PlayerPrefs.GetInt("Mole_Best_Score"))
