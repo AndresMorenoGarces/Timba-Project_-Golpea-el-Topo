@@ -1169,9 +1169,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71210f1f340d3574c9f7bd7dc6eeb98c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameDificult: 0
-  maxSimultaneMoles: 11
-  timeToSpawnMole: -5
+  gameDificult: 1
+  maxSimultaneMoles: 1
+  timeToSpawnMole: 2
   voidMoleTransforms:
   - {fileID: 1618432020}
   - {fileID: 182559815}
