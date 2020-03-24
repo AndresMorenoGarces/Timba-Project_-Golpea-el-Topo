@@ -5,13 +5,40 @@ using TMPro;
 
 public class UIScript : MonoBehaviour
 {
-    public TextMeshProUGUI playerTurnText;
+    [Header ("SmasherTexts")]
+    public TextMeshProUGUI smasherScore;
+    public TextMeshProUGUI smasherLastScore;
+    public TextMeshProUGUI smasherBestScore;
 
-    public void UpdatePlayerTurnText(bool isPlayerOneTurn) 
+    [Header ("MoleTexts")]
+    public TextMeshProUGUI moleScore;
+    public TextMeshProUGUI moleLastScore;
+    public TextMeshProUGUI moleBestScore;
+
+    private GameManager gameManager;
+
+    private void SmasherScoreText() 
     {
-        if (isPlayerOneTurn)
-            playerTurnText.text = "Player One Turn";
-        else
-            playerTurnText.text = "Player Two Turn";
+        smasherScore.text = "" + gameManager.GetComponent<GameManager>().SetSmasherScore();
+        smasherBestScore.text = "" + PlayerPrefs.GetInt("Smasher_Best_Score");
+    }
+    private void MoleScoreText() 
+    {
+        moleScore.text = "" + gameManager.GetComponent<GameManager>().SetMoleScore();
+        moleBestScore.text = "" + PlayerPrefs.GetInt("Mole_Best_Score");
+    }
+    private void Awake()
+    {
+        gameManager = GameObject.Find("GameManager_Container").GetComponent<GameManager>();
+    }
+    private void Start()
+    {
+        moleLastScore.text = "" + PlayerPrefs.GetInt("Mole_Last_Score");
+        smasherLastScore.text = "" + PlayerPrefs.GetInt("Smasher_Last_Score");
+    }
+    private void Update()
+    {
+        SmasherScoreText();
+        MoleScoreText();
     }
 }

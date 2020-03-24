@@ -4,27 +4,27 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    //public GameObject playerOneInterface, playerTwoInterface;
-    public List<Transform> moleTransforms;
+    public GameDificult gameDificult;
     public int maxSimultaneMoles = 1;
-    public float timeToSpawnMole = 2;
-    //private bool isPlayerOneTurn = true;
-    private GameObject uiScriptContainer;
-    //private TurnManager turnManager;
-    private KeyCode[] keyCodeArray;
-    private int currentMole, simultaneActiveMole;
+    public float timeToSpawnMole = 1; 
+    public List<Transform> voidMoleTransforms;
 
-    private string stringMole;
-    //private List<int> moleListNum = new List<int>();
+    private List<GameObject> moleToDestroy = new List<GameObject>();
+    private List<Transform> oldMoles = new List<Transform>();
+    private GameObject uiScriptContainer;
+    private Transform beforeMole;
+    private KeyCode[] keyCodeArray;
+    private int currentMole = 0, simultaneActiveMole = 0, smasherScore = 0, moleScore = 0;
 
     private void Awake()
     {
-        //    turnManager = new TurnManager();
-        //uiScriptContainer = GameObject.Find("uiScriptContainer");
+        GameDifficult();
     }
-    void Start()
+    private void Start()
     {
-        //uiScriptContainer.GetComponent<UIScript>().UpdatePlayerTurnText(true);
+        smasherScore = 0;
+        if (maxSimultaneMoles == 0)
+            maxSimultaneMoles = 1;
         keyCodeArray = new KeyCode[10]
             {
                 KeyCode.Keypad0,
@@ -39,24 +39,46 @@ public class GameManager : MonoBehaviour
                 KeyCode.Keypad9,
             };
     }
-    void Update()
+    private void Update()
     {
-        AssignMolePosition();
+        AssignMole();
+        InstanceMole();
+        GameDifficult();
     }
 
-
-
-    //private void UpdateTurn() 
-    //{
-
-    //}
-
-    private void AssignMolePosition()
+    private void InstanceMole()
     {
-        /* Implemente estos Ifs porque no pude obtener en int el valor de la tecla que este presionando.... Se ve horrible!!! ;( */
-        if (Input.GetKey(KeyCode.Keypad0))
-            currentMole = 0;
-        else if (Input.GetKey(KeyCode.Keypad1))
+        /*stringMole = Input.inputString;
+        currentMole = (int) Input.GetAxis(stringMole);*/
+        if (Input.GetKeyDown(keyCodeArray[currentMole]) && simultaneActiveMole < maxSimultaneMoles 
+            && currentMole != 0 && !oldMoles.Contains(voidMoleTransforms[currentMole]))
+        {
+            oldMoles.Add(voidMoleTransforms[currentMole]);
+            new MoleScript(currentMole, voidMoleTransforms[currentMole]);
+            simultaneActiveMole++;
+            moleToDestroy.Add(GameObject.Find("Mole " + currentMole));
+            if (simultaneActiveMole == maxSimultaneMoles)
+                StartCoroutine(DestroyMole());
+        }
+        IEnumerator DestroyMole()
+        {
+            yield return new WaitForSeconds(timeToSpawnMole);
+            for (int i = 0; i < moleToDestroy.Count; i++)
+            {
+                if (moleToDestroy[i] != null)
+                {
+                    UpdateMoleScore();
+                    SaveMoleScore();
+                    Destroy(moleToDestroy[i]);
+                }
+            }
+            simultaneActiveMole = 0;
+            oldMoles.Clear();
+        }
+    }
+    private void AssignMole() 
+    {
+        if (Input.GetKey(KeyCode.Keypad1))
             currentMole = 1;
         else if (Input.GetKey(KeyCode.Keypad2))
             currentMole = 2;
@@ -74,23 +96,53 @@ public class GameManager : MonoBehaviour
             currentMole = 8;
         else if (Input.GetKey(KeyCode.Keypad9))
             currentMole = 9;
-
-        //stringMole = Input.inputString;
-        //currentMole = (int) Input.GetAxis(stringMole);
-        //print("Stringmole: "+ stringMole + ". CurrentMole: "+ currentMole);
-
-        if (Input.GetKey(keyCodeArray[currentMole]) && simultaneActiveMole < maxSimultaneMoles)
+        else
+            currentMole = 0;
+    }
+    private void GameDifficult() 
+    {
+        if (gameDificult == GameDificult.Easy)
+        { maxSimultaneMoles = 3; timeToSpawnMole = 2; }
+        else if (gameDificult == GameDificult.Normal)
+        { maxSimultaneMoles = 2; timeToSpawnMole = 1; }
+        else if (gameDificult == GameDificult.Hard)
+        { maxSimultaneMoles = 1; timeToSpawnMole = 0.5f; }
+        else if (gameDificult == GameDificult.Personalized)
         {
-            new MoleScript(currentMole, moleTransforms[currentMole]);
-            moleTransforms.Remove(moleTransforms[currentMole]);
-            simultaneActiveMole++;
-            StartCoroutine(DestroyMole());
+            if (maxSimultaneMoles > 9 || maxSimultaneMoles < 1)
+                maxSimultaneMoles = 9;
+            if (timeToSpawnMole > 10 || timeToSpawnMole < 1)
+                timeToSpawnMole = 10;
         }
-        IEnumerator DestroyMole()
-        {
-            yield return new WaitForSeconds(timeToSpawnMole);
-            moleTransforms.Add(GameObject.Find("Mole " +currentMole).transform);
-            Destroy(GameObject.Find("Mole " + currentMole));
-        }
+    }
+
+    public int SetSmasherScore() 
+    {
+        return smasherScore;
+    }
+    public int SetMoleScore() 
+    {
+        return moleScore;
+    }
+    public void UpdateSmasherScore() 
+    {
+        smasherScore += 10;
+    }
+    public void UpdateMoleScore() 
+    {
+        moleScore += 10;
+    }
+
+    public void SaveSmasherScore() 
+    {
+        PlayerPrefs.SetInt("Smasher_Last_Score", smasherScore);
+        if (smasherScore > PlayerPrefs.GetInt("Smasher_Best_Score"))
+            PlayerPrefs.SetInt("Smasher_Best_Score", smasherScore);
+    }
+    public void SaveMoleScore() 
+    {
+        PlayerPrefs.SetInt("Mole_Last_Score", moleScore);
+        if (moleScore > PlayerPrefs.GetInt("Mole_Best_Score"))
+            PlayerPrefs.SetInt("Mole_Best_Score", moleScore);
     }
 }
