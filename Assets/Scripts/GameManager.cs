@@ -5,11 +5,13 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public GameDificult gameDificult;
-    public int maxSimultaneMoles = 1;
+    public int limitSimultaneMoles = 1;
     public float timeToSpawnMole = 1; 
     public List<Transform> voidMoleTransforms;
+    public GameObject xObject;
 
     private List<GameObject> moleToDestroy = new List<GameObject>();
+    private List<GameObject> xObjectsToDestroy = new List<GameObject>();
     private List<Transform> oldMoles = new List<Transform>();
     private KeyCode[] keyCodeArray;
     private int currentMole = 0, simultaneActiveMole = 0, smasherScore = 0, moleScore = 0;
@@ -21,8 +23,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         smasherScore = 0;
-        if (maxSimultaneMoles == 0)
-            maxSimultaneMoles = 1;
+        if (limitSimultaneMoles == 0)
+            limitSimultaneMoles = 1;
         keyCodeArray = new KeyCode[10]
             {
                 KeyCode.Keypad0,
@@ -44,16 +46,21 @@ public class GameManager : MonoBehaviour
         GameDifficult();
     }
 
+    public string SetDifficultEnum()
+    {
+        return gameDificult.ToString();
+    }
+
     private void InstanceMole() // Funcion que instancia un topo con posicion, cantidad y tiempo
     {
-        if (Input.GetKeyDown(keyCodeArray[currentMole]) && simultaneActiveMole < maxSimultaneMoles 
+        if (Input.GetKeyDown(keyCodeArray[currentMole]) && simultaneActiveMole < limitSimultaneMoles 
             && currentMole != 0 && !oldMoles.Contains(voidMoleTransforms[currentMole]))
         {
             oldMoles.Add(voidMoleTransforms[currentMole]);
             new MoleScript(currentMole, voidMoleTransforms[currentMole]);
             simultaneActiveMole++;
             moleToDestroy.Add(GameObject.Find("Mole " + currentMole));
-            if (simultaneActiveMole == maxSimultaneMoles)
+            if (simultaneActiveMole == limitSimultaneMoles)
                 StartCoroutine(DestroyMole());
         }
         IEnumerator DestroyMole()
@@ -67,6 +74,11 @@ public class GameManager : MonoBehaviour
                     SaveMoleScore();
                     Destroy(moleToDestroy[i]);
                 }
+            }
+            for (int i = 0; i < xObjectsToDestroy.Count; i++)
+            {
+                if (xObjectsToDestroy[i] != null)
+                    Destroy(xObjectsToDestroy[i]);
             }
             simultaneActiveMole = 0;
             oldMoles.Clear();
@@ -101,17 +113,17 @@ public class GameManager : MonoBehaviour
     private void GameDifficult() // Esta funcion permite cambiar la dificultad del juego por unas preestablecidas o personalizarla con sus respectivas restricciones
     {
         if (gameDificult == GameDificult.Easy)
-        { maxSimultaneMoles = 3; timeToSpawnMole = 2; }
+        { limitSimultaneMoles = 3; timeToSpawnMole = 2; }
         else if (gameDificult == GameDificult.Normal)
-        { maxSimultaneMoles = 2; timeToSpawnMole = 1; }
+        { limitSimultaneMoles = 2; timeToSpawnMole = 1; }
         else if (gameDificult == GameDificult.Hard)
-        { maxSimultaneMoles = 1; timeToSpawnMole = 0.5f; }
+        { limitSimultaneMoles = 1; timeToSpawnMole = 0.5f; }
         else if (gameDificult == GameDificult.Personalized)
         {
-            if (maxSimultaneMoles > 9 || maxSimultaneMoles < 1)
-                maxSimultaneMoles = 9;
-            if (timeToSpawnMole > 10 || timeToSpawnMole < 1)
-                timeToSpawnMole = 10;
+            if (limitSimultaneMoles > 9) limitSimultaneMoles = 9;
+            else if (limitSimultaneMoles < 1) limitSimultaneMoles = 1;
+            if (timeToSpawnMole > 10) timeToSpawnMole = 10;
+            else if(timeToSpawnMole < 0.5f) timeToSpawnMole = 0.5f;
         }
     }
 
@@ -143,5 +155,11 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("Mole_Last_Score", moleScore);
         if (moleScore > PlayerPrefs.GetInt("Mole_Best_Score"))
             PlayerPrefs.SetInt("Mole_Best_Score", moleScore);
+    }
+    public void ApplyXSprite(GameObject moleObject) 
+    {
+        GameObject _xObject = Instantiate(xObject);
+        _xObject.transform.position = moleObject.transform.position;
+        xObjectsToDestroy.Add(_xObject);
     }
 }

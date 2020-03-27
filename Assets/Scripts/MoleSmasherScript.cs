@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MoleSmasherScript : MonoBehaviour
 {
@@ -9,6 +7,7 @@ public class MoleSmasherScript : MonoBehaviour
     private void OnMouseDown() // Funcion que destruye el topo, guarda y carga variables mediante funciones 
     {
         Destroy(gameObject);
+        gameManager.ApplyXSprite(this.gameObject);
         gameManager.UpdateSmasherScore();
         gameManager.SaveSmasherScore();
     }
