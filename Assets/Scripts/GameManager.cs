@@ -14,10 +14,12 @@ public class GameManager : MonoBehaviour
     private List<GameObject> xObjectsToDestroy = new List<GameObject>();
     private List<Transform> oldMoles = new List<Transform>();
     private KeyCode[] keyCodeArray;
+    private AudioManager audioManager;
     private int currentMole = 0, simultaneActiveMole = 0, smasherScore = 0, moleScore = 0;
 
     private void Awake() 
     {
+        audioManager = GameObject.Find("AudioSystem").GetComponent<AudioManager>();
         GameDifficult();
     }
     private void Start()
@@ -50,7 +52,14 @@ public class GameManager : MonoBehaviour
     {
         return gameDificult.ToString();
     }
-
+    public int SetLimitSimultaneMoles() 
+    {
+        return limitSimultaneMoles;
+    }
+    public float SetTimeToSpawnMole() 
+    {
+        return timeToSpawnMole;
+    }
     private void InstanceMole() // Funcion que instancia un topo con posicion, cantidad y tiempo
     {
         if (Input.GetKeyDown(keyCodeArray[currentMole]) && simultaneActiveMole < limitSimultaneMoles 
@@ -62,6 +71,7 @@ public class GameManager : MonoBehaviour
             moleToDestroy.Add(GameObject.Find("Mole " + currentMole));
             if (simultaneActiveMole == limitSimultaneMoles)
                 StartCoroutine(DestroyMole());
+            audioManager.AppearSound();
         }
         IEnumerator DestroyMole()
         {
@@ -72,6 +82,7 @@ public class GameManager : MonoBehaviour
                 {
                     UpdateMoleScore();
                     SaveMoleScore();
+                    audioManager.WinSound();
                     Destroy(moleToDestroy[i]);
                 }
             }
