@@ -13,7 +13,6 @@ public class MoleSmasherScript : MonoBehaviour
         gameManager.SaveSmasherScore();
         audioManager.PlayHit();
     }
-
     private void Awake()
     {
         gameManager = GameObject.Find("GameManager_Container").GetComponent<GameManager>();

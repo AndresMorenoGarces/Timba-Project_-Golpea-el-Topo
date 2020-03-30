@@ -47,7 +47,14 @@ public class GameManager : MonoBehaviour
         InstanceMole();
         GameDifficult();
     }
-
+    public int SetSmasherScore() // Funcion que permite utilizar una variable desde otra clase
+    {
+        return smasherScore;
+    }
+    public int SetMoleScore() // Funcion que permite utilizar una variable desde otra clase
+    {
+        return moleScore;
+    }
     public string SetDifficultEnum()
     {
         return gameDificult.ToString();
@@ -60,14 +67,15 @@ public class GameManager : MonoBehaviour
     {
         return timeToSpawnMole;
     }
+
     private void InstanceMole() // Funcion que instancia un topo con posicion, cantidad y tiempo
     {
         if (Input.GetKeyDown(keyCodeArray[currentMole]) && simultaneActiveMole < limitSimultaneMoles 
             && currentMole != 0 && !oldMoles.Contains(voidMoleTransforms[currentMole]))
         {
-            oldMoles.Add(voidMoleTransforms[currentMole]);
-            new MoleScript(currentMole, voidMoleTransforms[currentMole]);
             simultaneActiveMole++;
+            new MoleScript(currentMole, voidMoleTransforms[currentMole]);
+            oldMoles.Add(voidMoleTransforms[currentMole]);
             moleToDestroy.Add(GameObject.Find("Mole " + currentMole));
             if (simultaneActiveMole == limitSimultaneMoles)
                 StartCoroutine(DestroyMole());
@@ -138,14 +146,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public int SetSmasherScore() // Funcion que permite utilizar una variable desde otra clase
-    {
-        return smasherScore;
-    }
-    public int SetMoleScore() // Funcion que permite utilizar una variable desde otra clase
-    {
-        return moleScore;
-    }
     public void UpdateSmasherScore() // Funcion que actualiza la variable smacherScore
     {
         smasherScore += 10;
@@ -154,7 +154,6 @@ public class GameManager : MonoBehaviour
     {
         moleScore += 10;
     }
-
     public void SaveSmasherScore() // Funcion que guarda las variable de la ultima partida y la mejor del topo
     {
         PlayerPrefs.SetInt("Smasher_Last_Score", smasherScore);
@@ -167,6 +166,7 @@ public class GameManager : MonoBehaviour
         if (moleScore > PlayerPrefs.GetInt("Mole_Best_Score"))
             PlayerPrefs.SetInt("Mole_Best_Score", moleScore);
     }
+
     public void ApplyXSprite(GameObject moleObject) 
     {
         GameObject _xObject = Instantiate(xObject);
