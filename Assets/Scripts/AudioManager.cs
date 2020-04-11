@@ -1,23 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class AudioManager : MonoBehaviour
-{
-    public AudioClip hitSound;
-    public AudioClip appearSound;
-    public AudioClip winSound;
+﻿using UnityEngine;
+public class AudioManager : MonoBehaviour {
+    private AudioClip hitSound;
+    private AudioClip appearSound;
+    private AudioClip winSound;
     public AudioSource audioSource;
-    public void PlayHit() 
-    {
+    private void Awake() {
+        hitSound = SoundsLibrary("hitSound");
+        appearSound= SoundsLibrary("appearSound");
+        winSound= SoundsLibrary("winSound");
+    }
+    public void PlayHit() {
         audioSource.PlayOneShot(hitSound);
     }
-    public void AppearSound() 
-    {
+    public void AppearSound() {
         audioSource.PlayOneShot(appearSound);
     }
-    public void WinSound() 
-    {
+    public void WinSound() {
         audioSource.PlayOneShot(winSound);
+    }
+    private AudioClip SoundsLibrary(string audioClipName) {
+        return (AudioClip)Resources.Load("Sounds/" + audioClipName, typeof(AudioClip));
     }
 }
